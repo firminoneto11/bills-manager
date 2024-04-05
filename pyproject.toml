@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "bills-manager"
+version = "1.0.0"
+description = "A bill manager project"
+authors = ["firminoneto11 <firminoneto11@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.12.*"
+sqlalchemy = "2.0.*"
+environs = "11.0.*"
+aiosqlite = "0.20.*"
+alembic = "1.13.*"
+fastapi = "0.110.*"
+uvicorn = "0.29.*"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "0.3.*"
+pytest = "8.1.*"
+coverage = "7.4.*"
+pytest-sugar = "1.0.*"
+pytest-asyncio = "0.23.*"
+pytest-env = "1.1.*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Ruff configs
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = ["E501"]
+
+# Pytest configs
+[tool.pytest.ini_options]
+addopts = "-s -v --durations=5"
+markers = ["unit", "integration", "e2e"]
+asyncio_mode = "auto"
+
+# Coverage configs
+[tool.coverage.run]
+omit = ["test/*", "*conftest.py", "venv/*", "tests/*"]
+data_file = ".coverage/coverage"
+branch = true
+
+[tool.coverage.report]
+skip_covered = true
+precision = 2
+fail_under = 90
+exclude_also = ["if TYPE_CHECKING:"]
+
+[tool.coverage.html]
+directory = ".coverage/html-report"
+skip_covered = true
