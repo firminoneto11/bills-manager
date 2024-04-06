@@ -131,3 +131,7 @@ class _DBConnectionHandler:
                 yield ses
         finally:
             self.active_sessions.remove(ses)
+
+    async def get_session(self):
+        async with self.begin_session() as ses:
+            yield ses
