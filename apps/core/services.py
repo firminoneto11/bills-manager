@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING
 
 from fastapi import HTTPException
 
@@ -9,17 +9,12 @@ if TYPE_CHECKING:
     from .repositories import BillsRepository
     from .schemas import BillSchemaInput
 
-    class QueryParams(TypedDict):
-        reference: str | None
-        total_from: float | None
-        total_to: float | None
-
 
 @dataclass
 class BillsService:
     repository: "BillsRepository"
 
-    async def get_bills(self, query_params: "QueryParams"):
+    async def get_bills(self, query_params: dict):
         return await self.repository.fetch_all(params=query_params)
 
     async def create_bill(self, data: "BillSchemaInput"):

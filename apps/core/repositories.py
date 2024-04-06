@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
@@ -8,6 +8,11 @@ from .models import Bills, SubBills
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    class QueryParams(TypedDict):
+        reference: str | None
+        total_from: float | None
+        total_to: float | None
 
 
 @dataclass
@@ -19,11 +24,16 @@ class BillsRepository:
         await self.db_session.commit()
         return instance
 
-    async def fetch_all(self, params: dict):
-        stmt = select(Bills).options(joinedload(Bills.sub_bills))
+    async def fetch_all(self, params: "QueryParams"):
+        stmt = (
+            select(Bills)
+            .join(SubBills, SubBills.bill_id == Bills.id)
+            .options(joinedload(Bills.sub_bills))
+            .order_by(Bills.id)
+        )
 
         if ref := params.get("reference"):
-            stmt = stmt.where(SubBills.reference.ilike(ref))
+            stmt = stmt.where(SubBills.reference.ilike(f"%{ref}%"))
 
         if total_from := params.get("total_from"):
             stmt = stmt.where(Bills.total == total_from)
