@@ -1,15 +1,8 @@
-from typing import Annotated
-
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from conf.db import get_db_handler
+from conf.db import DbSessionDep
 
 from .repositories import BillsRepository
 from .schemas import BillSchemaInput, BillSchemaOutput
 from .services import BillsService
-
-DbSessionDep = Annotated[AsyncSession, Depends(get_db_handler().get_session)]
 
 
 class BillsController:

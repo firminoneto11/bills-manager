@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import DeclarativeBase
 
 
-@lru_cache()
+@lru_cache
 def get_db_handler(connection_string: str):
     return _DBConnectionHandler(connection_string=connection_string)
 
