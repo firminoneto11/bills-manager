@@ -13,11 +13,7 @@ class BillSchemaInput(BaseModel):
     sub_bills: list[SubBillSchemaInput]
 
 
-class SubBillSchemaOutput(BaseModel):
-    id: int
-    amount: float
-    reference: Optional[str]
-
+class SubBillSchemaOutput(SubBillSchemaInput):
     model_config = ConfigDict(from_attributes=True)
 
 

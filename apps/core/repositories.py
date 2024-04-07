@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypedDict
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
 
 from .models import Bills, SubBills
@@ -33,12 +33,12 @@ class BillsRepository:
         )
 
         if ref := params.get("reference"):
-            stmt = stmt.where(SubBills.reference.ilike(f"%{ref}%"))
+            stmt = stmt.filter(func.lower(SubBills.reference).like(f"%{ref}%".lower()))
 
         if total_from := params.get("total_from"):
-            stmt = stmt.where(Bills.total == total_from)
+            stmt = stmt.filter(Bills.total == total_from)
 
         if total_to := params.get("total_to"):
-            stmt = stmt.where(SubBills.amount == total_to)
+            stmt = stmt.filter(SubBills.amount == total_to)
 
         return (await self.db_session.scalars(stmt)).unique().all()

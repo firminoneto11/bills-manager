@@ -12,7 +12,7 @@ from .routers import routers
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await (conn := get_db_handler()).connect()
+    await (conn := get_db_handler()).connect(echo_sql=True)
     yield
     await conn.disconnect()
 

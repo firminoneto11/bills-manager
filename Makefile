@@ -22,3 +22,6 @@ hcov:
 	coverage html
 	python -c "import webbrowser; webbrowser.open_new_tab('$(url)')"
 	python -m http.server -d .coverage/html-report $(cov_port)
+
+migrate:
+	alembic upgrade head
