@@ -2,3 +2,5 @@ venv/
 *.env
 .gitignore
 *.db
+.coverage
+.pytest_cache
