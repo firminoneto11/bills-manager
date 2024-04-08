@@ -1,10 +1,9 @@
 name: CI Tests
 
 on:
-  push:
-    branches:
-      - main
-      - add-ci-workflow
+  # push:
+  #   branches:
+  #     - main
   pull_request:
     branches:
       - main
