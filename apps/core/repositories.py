@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypedDict
 
-from sqlalchemy import func, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select
+from sqlalchemy.orm import contains_eager
 
 from .models import Bills, SubBills
 
@@ -27,16 +27,16 @@ class BillsRepository:
     async def fetch_all(self, params: "QueryParams"):
         stmt = (
             select(Bills)
-            .join(SubBills, SubBills.bill_id == Bills.id)
-            .options(joinedload(Bills.sub_bills))
+            .join(Bills.sub_bills)
+            .options(contains_eager(Bills.sub_bills))
             .order_by(Bills.id)
         )
 
-        if ref := params.get("reference"):
-            stmt = stmt.filter(func.lower(SubBills.reference).like(f"%{ref}%".lower()))
-
         if total_from := params.get("total_from"):
             stmt = stmt.filter(Bills.total == total_from)
+
+        if ref := params.get("reference"):
+            stmt = stmt.filter(SubBills.reference.ilike(f"%{ref}%"))
 
         if total_to := params.get("total_to"):
             stmt = stmt.filter(SubBills.amount == total_to)

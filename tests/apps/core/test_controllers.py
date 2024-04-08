@@ -69,7 +69,6 @@ async def test_get_request_should_return_data(
     assert response.json() == setup_bill_data
 
 
-@mark.this
 @mark.parametrize(
     argnames="query,expected_return",
     argvalues=[
@@ -113,6 +112,18 @@ async def test_get_request_should_return_data(
                 }
             ],
         ),
+        (
+            "total_to=2",
+            [
+                {
+                    "id": 1,
+                    "total": 3,
+                    "sub_bills": [
+                        {"amount": 2, "reference": "ref-2"},
+                    ],
+                }
+            ],
+        ),
     ],
 )
 async def test_get_request_with_parameters(
@@ -126,8 +137,3 @@ async def test_get_request_with_parameters(
 
     assert response.status_code == 200
     assert response.json() == expected_return
-
-    # if response.json() != expected_return:
-    #     print(query)
-    #     print(response.json())
-    #     print(expected_return)
