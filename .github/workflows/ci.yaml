@@ -13,6 +13,8 @@ jobs:
   test:
     name: CI Tests
     runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
 
     steps:
       - name: Checkout code
@@ -26,7 +28,7 @@ jobs:
       - uses: Gr1N/setup-poetry@v9
 
       - name: Install dependencies
-        run: poetry install --no-root --with dev
+        run: poetry install --no-root
 
       - name: Run tests and coverage
         run: |
