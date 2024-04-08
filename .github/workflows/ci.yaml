@@ -1,0 +1,35 @@
+name: CI Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: CI Tests
+    runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: Gr1N/setup-poetry@v9
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Run tests and coverage
+        run: |
+          coverage run -m pytest
+          coverage report
