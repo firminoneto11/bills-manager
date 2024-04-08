@@ -25,3 +25,9 @@ hcov:
 
 migrate:
 	alembic upgrade head
+
+test:
+	docker compose -f ./scripts/docker-compose-test.yaml up --build
+	docker rm bills-manager-tests
+	docker rmi scripts-app
+	docker network rm scripts_default

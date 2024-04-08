@@ -1,0 +1,33 @@
+# Staging
+FROM python:3.12-slim as staging
+
+ENV POETRY_NO_INTERACTION=1
+
+WORKDIR /src
+
+COPY pyproject.toml .
+COPY poetry.lock .
+COPY README.md .
+
+RUN pip install poetry
+
+RUN poetry install --no-root
+
+RUN poetry export -f requirements.txt --output /src/requirements.txt --with dev
+
+# Final
+FROM staging as final
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /src
+
+COPY --from=staging /src/requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir -r /src/requirements.txt
+
+COPY . .
+
+CMD [ "bash", "-c", "coverage run -m pytest; coverage report"]
