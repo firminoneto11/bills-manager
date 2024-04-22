@@ -7,3 +7,5 @@ ALLOWED_HOSTS = get_env().str("ALLOWED_HOSTS").split(",")
 ALLOWED_ORIGINS = get_env().str("ALLOWED_ORIGINS").split(",")
 
 APPS = ["apps.core"]
+
+MODELS_MODULE = "models"
