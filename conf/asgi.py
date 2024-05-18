@@ -27,6 +27,7 @@ def get_asgi_application():
         debug=Settings.DEBUG,
         docs_url=Settings.DOCS_URL,
         redoc_url=Settings.REDOC_URL,
+        openapi_url=Settings.OPENAPI_URL,
     )
 
     app.add_middleware(**allowed_hosts_middleware_configuration)
