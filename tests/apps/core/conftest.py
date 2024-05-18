@@ -9,9 +9,6 @@ if TYPE_CHECKING:
     from httpx import AsyncClient
 
 
-app_name = "core:bills"
-
-
 @fixture
 def bill_data():
     return {
@@ -54,5 +51,5 @@ def bill_data_failure_case():
 async def setup_bill_data(
     asgi_app: "FastAPI", client: "AsyncClient", bill_data: tuple[dict, dict]
 ) -> list[dict]:
-    endpoint = reverse_url(asgi_app, f"{app_name}:create")
+    endpoint = reverse_url(asgi_app, "bills:create")
     return [(await client.post(endpoint, json=data)).json() for data in bill_data]

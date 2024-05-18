@@ -30,7 +30,7 @@ class _DBConnectionHandler:
         if not self._is_connected:
             raise ConnectionError("This instance is not connected to the database yet")
 
-    async def _ping(self):
+    async def _test_connection(self):
         error = None
         self._is_connected = True
         async with self.begin_session() as ses:
@@ -94,7 +94,7 @@ class _DBConnectionHandler:
             self.engine, autoflush=False, autocommit=False, expire_on_commit=False
         )
 
-        await self._ping()
+        await self._test_connection()
 
         self._is_connected = True
 
@@ -135,3 +135,10 @@ class _DBConnectionHandler:
     async def get_session(self):
         async with self.begin_session() as ses:
             yield ses
+
+    async def ping(self):
+        try:
+            async with self.begin_session() as ses:
+                await ses.execute(text("SELECT 1;"))
+        except Exception as exc:
+            raise ConnectionError("Failed to connect to the database.") from exc

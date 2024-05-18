@@ -3,15 +3,16 @@ from typing import TYPE_CHECKING
 from pytest import mark
 from sqlalchemy import func, select
 
-from apps.core.models import Bills, SubBills
+from apps.bills.models import Bills, SubBills
 from shared.utils import reverse_url
-
-from .conftest import app_name
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
     from httpx import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
+
+
+app_name = "bills"
 
 
 async def test_post_request_should_create_bills(
