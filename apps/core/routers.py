@@ -1,23 +1,16 @@
 from fastapi import APIRouter
 
-from .controllers import BillsController
+from .controllers import HealthCheckController
 
-app_name, resource_name = "core", "bills"
+app_name = "core"
 router = APIRouter(prefix="/v1", tags=["Core"])
 
 
 router.add_api_route(
-    path="/bills",
-    endpoint=BillsController.get,
+    path="/health-check",
+    endpoint=HealthCheckController.get,
     methods=["GET"],
     status_code=200,
-    name=f"{app_name}:{resource_name}:list",
-)
-
-router.add_api_route(
-    path="/bills",
-    endpoint=BillsController.post,
-    methods=["POST"],
-    status_code=201,
-    name=f"{app_name}:{resource_name}:create",
+    name=f"{app_name}:get",
+    summary="An health check endpoint",
 )

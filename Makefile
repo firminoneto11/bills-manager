@@ -8,6 +8,7 @@ env:
 	python3.12 -m venv venv
 
 deps:
+	pip install --upgrade pip setuptools
 	poetry install --no-root
 
 dev:
