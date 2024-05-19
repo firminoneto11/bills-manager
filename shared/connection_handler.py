@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from functools import lru_cache
 from gc import collect
 from typing import TYPE_CHECKING, Optional
 
@@ -11,12 +10,7 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import DeclarativeBase
 
 
-@lru_cache
-def get_db_handler(connection_string: str):
-    return _DBConnectionHandler(connection_string=connection_string)
-
-
-class _DBConnectionHandler:
+class DBConnectionHandler:
     _connection_string: str
     _engine: Optional["AsyncEngine"] = None
     _make_session: Optional[async_sessionmaker["AsyncSession"]] = None
@@ -31,15 +25,15 @@ class _DBConnectionHandler:
             raise ConnectionError("This instance is not connected to the database yet")
 
     async def _test_connection(self):
-        error = None
-        self._is_connected = True
-        async with self.begin_session() as ses:
-            try:
+        error, self._is_connected = None, True
+        try:
+            async with self.begin_session() as ses:
                 await ses.execute(text("SELECT 1;"))
-            except Exception as exc:
-                error = exc
-            finally:
-                self._is_connected = False
+        except Exception as exc:
+            error = exc
+        finally:
+            self._is_connected = False
+
         if error:
             await self.disconnect()
             raise ConnectionError("Failed to connect to the database.") from error
