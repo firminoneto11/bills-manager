@@ -53,9 +53,7 @@ asyncio_mode = "auto"
 
 # Pytest-Env configs
 [tool.pytest_env]
-DATABASE_URL = "sqlite+aiosqlite:///:memory:"
-ALLOWED_HOSTS = "*"
-ALLOWED_ORIGINS = "*"
+ENVIRONMENT = "test"
 
 # Coverage configs
 [tool.coverage.run]
@@ -67,7 +65,7 @@ branch = true
 skip_covered = true
 precision = 2
 fail_under = 85
-exclude_also = ["if TYPE_CHECKING:"]
+exclude_also = ["if TYPE_CHECKING:", "match module :="]
 
 [tool.coverage.html]
 directory = ".coverage/html-report"
