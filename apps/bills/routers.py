@@ -3,10 +3,10 @@ from fastapi import APIRouter
 from .controllers import BillsController
 
 app_name = "bills"
-router = APIRouter(prefix="/v1", tags=["Bills"])
+router_v1 = APIRouter(tags=["Bills"])
 
 
-router.add_api_route(
+router_v1.add_api_route(
     path="/bills",
     endpoint=BillsController.get,
     methods=["GET"],
@@ -15,7 +15,7 @@ router.add_api_route(
     summary="Fetches a bill resource",
 )
 
-router.add_api_route(
+router_v1.add_api_route(
     path="/bills",
     endpoint=BillsController.post,
     methods=["POST"],

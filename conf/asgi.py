@@ -7,7 +7,7 @@ from .middleware import (
     allowed_hosts_middleware_configuration,
     cors_middleware_configuration,
 )
-from .routers import routers
+from .routers import router_v1
 from .settings import Settings
 
 
@@ -33,8 +33,7 @@ def get_asgi_application():
     app.add_middleware(**allowed_hosts_middleware_configuration)
     app.add_middleware(**cors_middleware_configuration)
 
-    for router in routers:
-        app.include_router(router=router, prefix=Settings.API_PREFIX)
+    app.include_router(router_v1, prefix=Settings.API_PREFIX)
 
     return app
 

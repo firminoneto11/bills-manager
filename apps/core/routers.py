@@ -3,10 +3,10 @@ from fastapi import APIRouter
 from .controllers import HealthCheckController
 
 app_name = "core"
-router = APIRouter(prefix="/v1", tags=["Core"])
+router_v1 = APIRouter(tags=["Core"])
 
 
-router.add_api_route(
+router_v1.add_api_route(
     path="/health-check",
     endpoint=HealthCheckController.get,
     methods=["GET"],
