@@ -3,12 +3,10 @@ from typing import TYPE_CHECKING
 from shared.utils import get_env
 
 if TYPE_CHECKING:
-    from shared.types import EnvironmentChoices
+    from shared.types import EnvChoices
 
 
-module: "EnvironmentChoices" = (
-    get_env().str("ENVIRONMENT", "development").lower().strip()
-)
+module: "EnvChoices" = get_env().str("ENVIRONMENT", "development").lower().strip()
 
 
 match module:

@@ -1,10 +1,8 @@
 import tomllib
 from typing import TYPE_CHECKING
 
-from shared.utils import get_env
-
 if TYPE_CHECKING:
-    from shared.types import EnvironmentChoices
+    from shared.types import EnvChoices
 
 
 with open("pyproject.toml", mode="rb") as file:
@@ -12,10 +10,6 @@ with open("pyproject.toml", mode="rb") as file:
 
 
 class BaseSettings:
-    ENVIRONMENT: "EnvironmentChoices" = (
-        get_env().str("ENVIRONMENT", "development").lower().strip()
-    )
-
     MODELS_MODULE = "models"
     APPS = [
         "apps.core",
@@ -34,6 +28,7 @@ class BaseSettings:
     # NOTE: These are here only for type checking purposes. They should be set on the
     # other files.
     if TYPE_CHECKING:
+        ENVIRONMENT: "EnvChoices"
         DATABASE_URL: str
         ALLOWED_HOSTS: list[str]
         ALLOWED_ORIGINS: list[str]
