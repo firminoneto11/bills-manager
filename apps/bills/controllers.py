@@ -1,4 +1,4 @@
-from conf.db import DbSessionDep
+from conf.db import Session
 
 from .repositories import BillsRepository
 from .schemas import BillSchemaInput, BillSchemaOutput
@@ -8,7 +8,7 @@ from .services import BillsService
 class BillsController:
     @staticmethod
     async def get(
-        db_session: DbSessionDep,
+        db_session: Session,
         reference: str | None = None,
         total_from: float | None = None,
         total_to: float | None = None,
@@ -22,6 +22,6 @@ class BillsController:
         return await svc.get_bills(query_params)
 
     @staticmethod
-    async def post(db_session: DbSessionDep, data: BillSchemaInput) -> BillSchemaOutput:
+    async def post(db_session: Session, data: BillSchemaInput) -> BillSchemaOutput:
         svc = BillsService(BillsRepository(db_session))
         return await svc.create_bill(data)

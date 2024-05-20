@@ -6,14 +6,14 @@ from pytest import fixture
 from uvloop import EventLoopPolicy
 
 from conf.asgi import get_asgi_application
-from conf.db import get_db_handler, get_metadata
+from conf.db import get_db_handler, get_metadata, get_session
 from shared.models import TimeStampedBaseModel
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    from shared.connection_handler import _DBConnectionHandler
+    from shared.connection_handler import DBConnectionHandler
 
 
 @fixture(scope="session", autouse=True)
@@ -39,7 +39,7 @@ def event_loop_policy():
 
 
 @fixture
-async def db_session(db_conn: "_DBConnectionHandler"):
+async def db_session(db_conn: "DBConnectionHandler"):
     async with db_conn.begin_session() as ses:
         with patch.object(target=ses, attribute="commit", new=ses.flush):
             try:
@@ -50,8 +50,8 @@ async def db_session(db_conn: "_DBConnectionHandler"):
 
 @fixture
 async def client(asgi_app: "FastAPI", db_session: "AsyncSession"):
-    transport, dependency = ASGITransport(app=asgi_app), get_db_handler().get_session
-    asgi_app.dependency_overrides[dependency] = lambda: db_session
+    transport = ASGITransport(app=asgi_app)
+    asgi_app.dependency_overrides[get_session] = lambda: db_session
     async with AsyncClient(base_url="http://test", transport=transport) as client:
         yield client
-    asgi_app.dependency_overrides[dependency] = dependency
+    asgi_app.dependency_overrides[get_session] = get_session

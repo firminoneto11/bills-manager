@@ -27,8 +27,8 @@ class DBConnectionHandler:
     async def _test_connection(self):
         error, self._is_connected = None, True
         try:
-            async with self.begin_session() as ses:
-                await ses.execute(text("SELECT 1;"))
+            async with self.begin_session() as session:
+                await session.execute(text("SELECT 1;"))
         except Exception as exc:
             error = exc
         finally:
@@ -119,20 +119,19 @@ class DBConnectionHandler:
     @asynccontextmanager
     async def begin_session(self):
         self._validate_connection()
-        self.active_sessions.add(ses := self.make_session())
-        try:
-            async with ses:
-                yield ses
-        finally:
-            self.active_sessions.remove(ses)
-
-    async def get_session(self):
-        async with self.begin_session() as ses:
-            yield ses
+        self.active_sessions.add(session := self.make_session())
+        async with session:
+            try:
+                yield session
+            except Exception as exc:
+                await session.rollback()
+                raise exc
+            finally:
+                self.active_sessions.remove(session)
 
     async def ping(self):
         try:
-            async with self.begin_session() as ses:
-                await ses.execute(text("SELECT 1;"))
+            async with self.begin_session() as session:
+                await session.execute(text("SELECT 1;"))
         except Exception as exc:
             raise ConnectionError("Failed to connect to the database.") from exc

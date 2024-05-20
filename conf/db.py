@@ -27,4 +27,9 @@ def get_metadata():
     return TimeStampedBaseModel.metadata
 
 
-DbSessionDep = Annotated[AsyncSession, Depends(get_db_handler().get_session)]
+async def get_session():
+    async with get_db_handler().begin_session() as session:
+        yield session
+
+
+Session = Annotated[AsyncSession, Depends(get_session)]

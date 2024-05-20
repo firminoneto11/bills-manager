@@ -10,6 +10,7 @@ module: "EnvironmentChoices" = (
     get_env().str("ENVIRONMENT", "development").lower().strip()
 )
 
+
 match module:
     case "development":
         from .development import Settings  # noqa
