@@ -24,5 +24,15 @@ def get_env():
     return env
 
 
-def reverse_url(application: "FastAPI", controller_name: str, *args, **kwargs):
-    return application.url_path_for(controller_name, **kwargs)
+def reverse_url(
+    application: "FastAPI", controller_name: str, version: str = "v1", *args, **kwargs
+):
+    for mount in application.routes:
+        if mount.name == version:
+            for route in mount.routes:
+                if route.name == controller_name:
+                    endpoint = mount.path + route.url_path_for(
+                        controller_name, **kwargs
+                    )
+                    return endpoint
+    raise AttributeError(f"The version {version!r} was not mounted in the application")

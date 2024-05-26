@@ -12,7 +12,7 @@ deps:
 	poetry install --no-root
 
 dev:
-	uvicorn $(app) --reload --port 8000
+	fastapi dev conf/asgi.py
 
 cov:
 	$(cov)

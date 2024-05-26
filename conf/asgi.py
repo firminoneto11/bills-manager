@@ -7,7 +7,7 @@ from .middleware import (
     allowed_hosts_middleware_configuration,
     cors_middleware_configuration,
 )
-from .routers import router_v1
+from .routers import app_v1, app_v2
 from .settings import Settings
 
 
@@ -19,23 +19,25 @@ async def lifespan(app: FastAPI):
 
 
 def get_asgi_application():
-    app = FastAPI(
+    application = FastAPI(
         title=Settings.APP_NAME,
         description=Settings.APP_DESCRIPTION,
         version=Settings.APP_VERSION,
-        lifespan=lifespan,
         debug=Settings.DEBUG,
         docs_url=Settings.DOCS_URL,
-        redoc_url=Settings.REDOC_URL,
         openapi_url=Settings.OPENAPI_URL,
+        redoc_url=Settings.REDOC_URL,
+        root_path=Settings.API_PREFIX,
+        lifespan=lifespan,
     )
 
-    app.add_middleware(**allowed_hosts_middleware_configuration)
-    app.add_middleware(**cors_middleware_configuration)
+    application.add_middleware(**allowed_hosts_middleware_configuration)
+    application.add_middleware(**cors_middleware_configuration)
 
-    app.include_router(router_v1, prefix=Settings.API_PREFIX)
+    application.mount(path="/v1", app=app_v1, name="v1")
+    application.mount(path="/v2", app=app_v2, name="v2")
 
-    return app
+    return application
 
 
-application = get_asgi_application()
+app = get_asgi_application()

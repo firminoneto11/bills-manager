@@ -5,6 +5,7 @@ from httpx import ASGITransport, AsyncClient
 from pytest import fixture
 from uvloop import EventLoopPolicy
 
+from conf import Settings
 from conf.asgi import get_asgi_application
 from conf.db import get_db_handler, get_metadata, get_session
 from shared.models import TimeStampedBaseModel
@@ -52,6 +53,7 @@ async def db_session(db_conn: "DBConnectionHandler"):
 async def client(asgi_app: "FastAPI", db_session: "AsyncSession"):
     transport = ASGITransport(app=asgi_app)
     asgi_app.dependency_overrides[get_session] = lambda: db_session
-    async with AsyncClient(base_url="http://test", transport=transport) as client:
+    base_url = f"http://test{Settings.API_PREFIX}"
+    async with AsyncClient(base_url=base_url, transport=transport) as client:
         yield client
     asgi_app.dependency_overrides[get_session] = get_session

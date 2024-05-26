@@ -22,7 +22,7 @@ class BaseSettings:
 
     API_PREFIX = "/api"
     DOCS_URL = "/docs"
-    REDOC_URL = "/redoc"
+    REDOC_URL = None
     OPENAPI_URL = "/openapi.json"
 
     # NOTE: These are here only for type checking purposes. They should be set on the
