@@ -19,23 +19,13 @@ async def lifespan(app: FastAPI):
 
 
 def get_asgi_application():
-    application = FastAPI(
-        title=Settings.APP_NAME,
-        description=Settings.APP_DESCRIPTION,
-        version=Settings.APP_VERSION,
-        debug=Settings.DEBUG,
-        docs_url=Settings.DOCS_URL,
-        openapi_url=Settings.OPENAPI_URL,
-        redoc_url=Settings.REDOC_URL,
-        root_path=Settings.API_PREFIX,
-        lifespan=lifespan,
-    )
+    application = FastAPI(**Settings.get_asgi_settings(), lifespan=lifespan)
 
     application.add_middleware(**allowed_hosts_middleware_configuration)
     application.add_middleware(**cors_middleware_configuration)
 
-    application.mount(path="/v1", app=app_v1, name="v1")
-    application.mount(path="/v2", app=app_v2, name="v2")
+    application.mount(path=f"{Settings.API_PREFIX}/v1", app=app_v1, name="v1")
+    application.mount(path=f"{Settings.API_PREFIX}/v2", app=app_v2, name="v2")
 
     return application
 

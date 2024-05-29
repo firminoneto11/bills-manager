@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 
 
 with open("pyproject.toml", mode="rb") as file:
-    py_project = tomllib.load(file)["tool"]["poetry"]
+    pyproject = tomllib.load(file)["tool"]["poetry"]
 
 
 class BaseSettings:
@@ -16,9 +16,9 @@ class BaseSettings:
         "apps.bills",
     ]
 
-    APP_NAME: str = py_project["name"]
-    APP_DESCRIPTION: str = py_project["description"]
-    APP_VERSION: str = py_project["version"]
+    APP_NAME: str = pyproject["name"]
+    APP_DESCRIPTION: str = pyproject["description"]
+    APP_VERSION: str = pyproject["version"]
 
     API_PREFIX = "/api"
     DOCS_URL = "/docs"
@@ -33,3 +33,15 @@ class BaseSettings:
         ALLOWED_HOSTS: list[str]
         ALLOWED_ORIGINS: list[str]
         DEBUG: bool
+
+    @classmethod
+    def get_asgi_settings(cls):
+        return {
+            "title": cls.APP_NAME,
+            "description": cls.APP_DESCRIPTION,
+            "version": cls.APP_VERSION,
+            "debug": cls.DEBUG,
+            "docs_url": cls.DOCS_URL,
+            "openapi_url": cls.OPENAPI_URL,
+            "redoc_url": cls.REDOC_URL,
+        }
