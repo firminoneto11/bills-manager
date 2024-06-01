@@ -23,7 +23,7 @@ def asgi_app():
 
 
 @fixture(scope="session", autouse=True)
-async def db_conn():
+async def db_handler():
     get_metadata()
 
     await (conn := get_db_handler()).connect()
@@ -40,8 +40,8 @@ def event_loop_policy():
 
 
 @fixture
-async def db_session(db_conn: "DBHandler"):
-    async with db_conn.begin_session() as session:
+async def db_session(db_handler: "DBHandler"):
+    async with db_handler.begin_session() as session:
         with patch.object(target=session, attribute="commit", new=session.flush):
             try:
                 yield session

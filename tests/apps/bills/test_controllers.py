@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 app_name = "bills"
 
 
-@mark.bug
 async def test_post_request_should_create_bills(
     httpx_client: tuple["AsyncClient", "FastAPI"],
     bill_data: tuple[dict, dict],
@@ -35,7 +34,6 @@ async def test_post_request_should_create_bills(
     assert response2.json() == bill_data_expected_creation[1]
 
 
-@mark.bug
 async def test_creating_bill_with_wrong_amount_should_not_succeed(
     httpx_client: tuple["AsyncClient", "FastAPI"],
     bill_data_failure_case: dict,
@@ -54,7 +52,6 @@ async def test_creating_bill_with_wrong_amount_should_not_succeed(
     assert not (await db_session.scalar(select(func.count()).select_from(SubBills)))
 
 
-@mark.bug
 async def test_get_request_should_return_empty_when_theres_no_data(
     httpx_client: tuple["AsyncClient", "FastAPI"],
 ):
