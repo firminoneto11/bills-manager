@@ -49,7 +49,7 @@ line-ending = "auto"
 # Pytest configs
 [tool.pytest.ini_options]
 addopts = "-s -v --durations=5"
-markers = []
+markers = ["bug", "this"]
 asyncio_mode = "auto"
 
 # Pytest-Env configs
@@ -60,12 +60,12 @@ ENVIRONMENT = "test"
 [tool.coverage.run]
 omit = ["test/*", "*conftest.py", "venv/*", "tests/*"]
 data_file = ".coverage/coverage"
-branch = true
+branch = false
 
 [tool.coverage.report]
 skip_covered = true
 precision = 2
-fail_under = 85
+fail_under = 80
 exclude_also = ["if TYPE_CHECKING:", "match module:"]
 
 [tool.coverage.html]

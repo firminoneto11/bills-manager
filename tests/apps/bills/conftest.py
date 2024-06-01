@@ -49,7 +49,8 @@ def bill_data_failure_case():
 
 @fixture
 async def setup_bill_data(
-    asgi_app: "FastAPI", client: "AsyncClient", bill_data: tuple[dict, dict]
+    httpx_client: tuple["AsyncClient", "FastAPI"], bill_data: tuple[dict, dict]
 ) -> list[dict]:
-    endpoint = reverse_url(asgi_app, "bills:create")
+    client, app = httpx_client
+    endpoint = reverse_url(application=app, controller_name="bills:create")
     return [(await client.post(endpoint, json=data)).json() for data in bill_data]

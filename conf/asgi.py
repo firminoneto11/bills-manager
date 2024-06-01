@@ -19,7 +19,12 @@ async def lifespan(app: FastAPI):
 
 
 def get_asgi_application():
-    application = FastAPI(**Settings.get_asgi_settings(), lifespan=lifespan)
+    kwargs = Settings.get_asgi_settings()
+    kwargs["docs_url"] = None
+    kwargs["openapi_url"] = None
+    kwargs["redoc_url"] = None
+
+    application = FastAPI(**kwargs, lifespan=lifespan)
 
     application.add_middleware(**allowed_hosts_middleware_configuration)
     application.add_middleware(**cors_middleware_configuration)

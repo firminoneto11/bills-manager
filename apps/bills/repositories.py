@@ -22,7 +22,7 @@ class BillsRepository:
     async def create(self, instance: Bills):
         self.db_session.add(instance)
         await self.db_session.commit()
-        return instance  # pragma: no cover
+        return instance
 
     async def fetch_all(self, params: "QueryParams"):
         stmt = (

@@ -12,7 +12,7 @@ router.add_api_route(
     methods=["GET"],
     status_code=200,
     name=f"{app_name}:list",
-    summary="Fetches a bill resource",
+    summary="Fetches/Lists a bill resource",
 )
 
 router.add_api_route(

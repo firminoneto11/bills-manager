@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.connection_handler import DBConnectionHandler
+from shared.db_handler import DBHandler
 from shared.models import TimeStampedBaseModel
 
 from .settings import Settings
@@ -13,7 +13,7 @@ from .settings import Settings
 
 @lru_cache
 def get_db_handler(connection_string: str = Settings.DATABASE_URL):
-    return DBConnectionHandler(connection_string)
+    return DBHandler(connection_string)
 
 
 def get_metadata():

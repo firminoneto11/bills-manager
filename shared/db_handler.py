@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import DeclarativeBase
 
 
-class DBConnectionHandler:
+class DBHandler:
     _connection_string: str
     _engine: Optional["AsyncEngine"] = None
     _make_session: Optional[async_sessionmaker["AsyncSession"]] = None
@@ -36,7 +36,7 @@ class DBConnectionHandler:
 
         if error:
             await self.disconnect()
-            raise ConnectionError("Failed to connect to the database.") from error
+            raise ConnectionError("Failed to connect to the database") from error
 
     def _reset(self):
         self._engine = None
@@ -52,13 +52,13 @@ class DBConnectionHandler:
     @property
     def engine(self):
         if self._engine is None:
-            raise ValueError("'_engine' is None. Can not proceed.")
+            raise ValueError("'_engine' is None. Can not proceed")
         return self._engine
 
     @property
     def make_session(self):
         if self._make_session is None:
-            raise ValueError("'_make_session' is None. Can not proceed.")
+            raise ValueError("'_make_session' is None. Can not proceed")
         return self._make_session
 
     @property
@@ -134,4 +134,4 @@ class DBConnectionHandler:
             async with self.begin_session() as session:
                 await session.execute(text("SELECT 1;"))
         except Exception as exc:
-            raise ConnectionError("Failed to connect to the database.") from exc
+            raise ConnectionError("Failed to connect to the database") from exc

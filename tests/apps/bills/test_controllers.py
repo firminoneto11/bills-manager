@@ -15,13 +15,14 @@ if TYPE_CHECKING:
 app_name = "bills"
 
 
+@mark.bug
 async def test_post_request_should_create_bills(
-    asgi_app: "FastAPI",
-    client: "AsyncClient",
+    httpx_client: tuple["AsyncClient", "FastAPI"],
     bill_data: tuple[dict, dict],
     bill_data_expected_creation: tuple[dict, dict],
 ):
-    endpoint = reverse_url(asgi_app, f"{app_name}:create")
+    client, app = httpx_client
+    endpoint = reverse_url(application=app, controller_name=f"{app_name}:create")
 
     response1, response2 = (
         await client.post(endpoint, json=bill_data[0]),
@@ -34,13 +35,14 @@ async def test_post_request_should_create_bills(
     assert response2.json() == bill_data_expected_creation[1]
 
 
+@mark.bug
 async def test_creating_bill_with_wrong_amount_should_not_succeed(
-    asgi_app: "FastAPI",
-    client: "AsyncClient",
+    httpx_client: tuple["AsyncClient", "FastAPI"],
     bill_data_failure_case: dict,
     db_session: "AsyncSession",
 ):
-    endpoint = reverse_url(asgi_app, f"{app_name}:create")
+    client, app = httpx_client
+    endpoint = reverse_url(application=app, controller_name=f"{app_name}:create")
 
     response = await client.post(endpoint, json=bill_data_failure_case)
 
@@ -52,19 +54,22 @@ async def test_creating_bill_with_wrong_amount_should_not_succeed(
     assert not (await db_session.scalar(select(func.count()).select_from(SubBills)))
 
 
+@mark.bug
 async def test_get_request_should_return_empty_when_theres_no_data(
-    asgi_app: "FastAPI", client: "AsyncClient"
+    httpx_client: tuple["AsyncClient", "FastAPI"],
 ):
-    response = await client.get(reverse_url(asgi_app, f"{app_name}:list"))
+    client, app = httpx_client
+    response = await client.get(reverse_url(app, f"{app_name}:list"))
 
     assert response.status_code == 200
     assert response.json() == []
 
 
 async def test_get_request_should_return_data(
-    asgi_app: "FastAPI", client: "AsyncClient", setup_bill_data: list[dict]
+    httpx_client: tuple["AsyncClient", "FastAPI"], setup_bill_data: list[dict]
 ):
-    response = await client.get(reverse_url(asgi_app, f"{app_name}:list"))
+    client, app = httpx_client
+    response = await client.get(reverse_url(app, f"{app_name}:list"))
 
     assert response.status_code == 200
     assert response.json() == setup_bill_data
@@ -128,13 +133,13 @@ async def test_get_request_should_return_data(
     ],
 )
 async def test_get_request_with_parameters(
-    asgi_app: "FastAPI",
-    client: "AsyncClient",
+    httpx_client: tuple["AsyncClient", "FastAPI"],
     query: str,
     expected_return: list[dict],
     setup_bill_data: list[dict],
 ):
-    response = await client.get(reverse_url(asgi_app, f"{app_name}:list") + f"?{query}")
+    client, app = httpx_client
+    response = await client.get(reverse_url(app, f"{app_name}:list") + f"?{query}")
 
     assert response.status_code == 200
     assert response.json() == expected_return
