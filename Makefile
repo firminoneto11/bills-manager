@@ -10,9 +10,10 @@ env:
 deps:
 	pip install --upgrade pip setuptools
 	poetry install --no-root
+	pip uninstall rich -y
 
 dev:
-	fastapi dev conf/asgi.py
+	uvicorn conf.asgi:app --reload --port 8000
 
 cov:
 	$(cov)
@@ -36,7 +37,7 @@ local:
 	docker rmi scripts-app
 	docker network rm scripts_default
 
-migrationss:
+makemigrations:
 	python3 manage.py makemigrations
 
 migrate:

@@ -25,7 +25,7 @@ def get_env():
 
 
 def reverse_url(
-    application: "FastAPI", controller_name: str, version: str = "v1", *args, **kwargs
+    application: "FastAPI", controller_name: str, version: str = "v1", **kwargs
 ) -> str:
     for mount in application.routes:
         if mount.name == version:

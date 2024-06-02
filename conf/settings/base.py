@@ -13,6 +13,8 @@ with open("pyproject.toml", mode="rb") as file:
 class BaseSettings:
     BASE_DIR = Path(__file__).parent.parent.parent
 
+    ENVIRONMENT_PREFIX = "BILLS_MANAGER_"
+
     MODELS_MODULE = "models"
     APPS = [
         "apps.core",
