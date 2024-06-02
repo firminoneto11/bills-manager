@@ -17,7 +17,7 @@ def makemigrations(message: str = "auto", autogenerate: bool = True):
     new_version = str(len(versions) + 1).zfill(4)
 
     command = f"alembic revision {'--autogenerate' if autogenerate else ''} -m"
-    command = [*command.split(" "), f"{new_version}_{message}"]
+    command = [*command.split(" "), f"{new_version}_{message.replace(' ', '_')}"]
 
     subprocess.run(command)
 
