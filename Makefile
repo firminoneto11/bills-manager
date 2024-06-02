@@ -24,9 +24,6 @@ hcov:
 	python -c "import webbrowser; webbrowser.open_new_tab('$(url)')"
 	python -m http.server -d .coverage/html-report $(cov_port)
 
-migrate:
-	alembic upgrade head
-
 test:
 	docker compose -f ./scripts/docker-compose-test.yaml up --build
 	docker rm bills-manager-tests
@@ -38,3 +35,9 @@ local:
 	docker rm bills-manager-local
 	docker rmi scripts-app
 	docker network rm scripts_default
+
+migrationss:
+	python3 manage.py makemigrations
+
+migrate:
+	python3 manage.py migrate

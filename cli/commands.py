@@ -1,31 +1,28 @@
-import asyncio as aio
-from traceback import print_exc
+import subprocess
+from os import listdir
 
-from alembic import command
-from alembic.config import Config
-from alembic.runtime.environment import EnvironmentContext
-from alembic.script import ScriptDirectory
 from typer import Typer
+
+from conf import Settings
 
 cli = Typer()
 
 
-def _makemigrations(msg: str):
-    config = Config("alembic.ini")
-    script = ScriptDirectory.from_config(config)
+@cli.command(name="makemigrations")
+def makemigrations(message: str = "auto", autogenerate: bool = True):
+    init_file = "__init__.py"
+    versions_directory = Settings.BASE_DIR / "migrations" / "versions"
 
-    try:
-        with EnvironmentContext(config, script):
-            command.revision(config, message=msg, autogenerate=True)
-    except:
-        print_exc()
+    versions = [el for el in listdir(versions_directory) if el != init_file]
+    new_version = str(len(versions) + 1).zfill(4)
 
+    command = f"alembic revision {'--autogenerate' if autogenerate else ''} -m"
+    command = [*command.split(" "), f"{new_version}_{message}"]
 
-@cli.command()
-def makemigrations(message: str):
-    return _makemigrations(message)
+    subprocess.run(command)
 
 
-@cli.command()
+@cli.command(name="migrate")
 def migrate():
-    print("Migrating")
+    command = "alembic upgrade head"
+    subprocess.run(command.split(" "))

@@ -1,4 +1,5 @@
 import tomllib
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -10,6 +11,8 @@ with open("pyproject.toml", mode="rb") as file:
 
 
 class BaseSettings:
+    BASE_DIR = Path(__file__).parent.parent.parent
+
     MODELS_MODULE = "models"
     APPS = [
         "apps.core",
