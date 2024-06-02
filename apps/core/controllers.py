@@ -1,13 +1,8 @@
-from conf.db import get_db_handler
+from .services import HealthCheckService
 
 
 class HealthCheckController:
     @staticmethod
     async def get():
-        healthy = True
-        try:
-            await get_db_handler().ping()
-        except ConnectionError:
-            healthy = False
-
-        return {"healthy": healthy}
+        svc = HealthCheckService()
+        return await svc.check_resources()
