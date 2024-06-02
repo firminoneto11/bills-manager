@@ -58,7 +58,15 @@ ENVIRONMENT = "test"
 
 # Coverage configs
 [tool.coverage.run]
-omit = ["test/*", "*conftest.py", "venv/*", "tests/*"]
+omit = [
+    "test/*",
+    "tests/*",
+    "*conftest.py",
+    "venv/*",
+    "manage.py",
+    "cli/*",
+    ".venv/*",
+]
 data_file = ".coverage/coverage"
 branch = false
 
