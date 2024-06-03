@@ -54,7 +54,7 @@ asyncio_mode = "auto"
 
 # Pytest-Env configs
 [tool.pytest_env]
-ENVIRONMENT = "test"
+BILLS_MANAGER_ENVIRONMENT = "test"
 
 # Coverage configs
 [tool.coverage.run]
