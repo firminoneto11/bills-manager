@@ -1,14 +1,14 @@
 """0001_auto
-Revision ID: 6d70f931d306
+Revision ID: 2ce9d410e527
 Revises:
-Create Date: 2024-06-01 22:04:13.335014
+Create Date: 2024-06-03 11:43:21.814108
 """
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "6d70f931d306"
+revision = "2ce9d410e527"
 down_revision = None
 branch_labels = None
 depends_on = None

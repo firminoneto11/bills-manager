@@ -38,7 +38,7 @@ local:
 	docker network rm scripts_default
 
 makemigrations:
-	python3 manage.py makemigrations
+	python manage.py makemigrations
 
 migrate:
-	python3 manage.py migrate
+	python manage.py migrate

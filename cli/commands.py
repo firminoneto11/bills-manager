@@ -1,6 +1,7 @@
 import subprocess
 from os import listdir
 
+from slugify import slugify
 from typer import Typer
 
 from conf import Settings
@@ -16,7 +17,7 @@ def makemigrations(message: str = "auto", autogenerate: bool = True):
     versions = [el for el in listdir(versions_directory) if el != init_file]
     new_version = str(len(versions) + 1).zfill(4)
 
-    message = message.replace(" ", "_").replace("-", "_").strip().lower()
+    message = slugify(text=message, separator="_")
     command = f"alembic revision {'--autogenerate' if autogenerate else ''} -m"
     command = [*command.split(" "), f"{new_version}_{message}"]
 
