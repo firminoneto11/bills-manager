@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
-from fastapi.routing import Mount
 from httpx import ASGITransport, AsyncClient
 from pytest import fixture
 from uvloop import EventLoopPolicy
@@ -11,10 +10,10 @@ from conf.db import get_database, get_metadata, get_session
 from shared.models import TimeStampedBaseModel
 
 if TYPE_CHECKING:
-    from fastapi import FastAPI
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from shared.database import Database
+    from shared.types import ASGIApp
 
 
 @fixture(scope="session", autouse=True)
@@ -47,17 +46,15 @@ async def db_session(database: "Database"):
 
 
 @fixture
-async def httpx_client(asgi_app: "FastAPI", db_session: "AsyncSession"):
+async def httpx_client(asgi_app: "ASGIApp", db_session: "AsyncSession"):
     asgi_app.dependency_overrides[get_session] = lambda: db_session
-    for mount in asgi_app.routes:
-        if isinstance(mount, Mount) and hasattr(mount.app, "dependency_overrides"):
-            mount.app.dependency_overrides[get_session] = lambda: db_session
+    for mount in asgi_app.state._mounted_applications:
+        mount.dependency_overrides[get_session] = lambda: db_session
 
     transport = ASGITransport(app=asgi_app)
     async with AsyncClient(base_url="http://test", transport=transport) as client:
         yield (client, asgi_app)
 
     asgi_app.dependency_overrides.clear()
-    for mount in asgi_app.routes:
-        if isinstance(mount, Mount) and hasattr(mount.app, "dependency_overrides"):
-            mount.app.dependency_overrides.clear()
+    for mount in asgi_app.state._mounted_applications:
+        mount.dependency_overrides.clear()

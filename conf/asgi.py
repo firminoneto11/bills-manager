@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from shared.types import ASGIApp
+
 from .db import get_database
 from .middleware import (
     allowed_hosts_middleware_configuration,
@@ -17,7 +19,7 @@ async def lifespan(app: FastAPI):
         yield
 
 
-def get_asgi_application():
+def get_asgi_application() -> ASGIApp:
     kwargs = Settings.get_asgi_settings()
     kwargs["docs_url"] = None
     kwargs["openapi_url"] = None
@@ -30,12 +32,14 @@ def get_asgi_application():
 
     # TODO: Check if the middleware is drilled down into the mounted apps
 
+    application.state._mounted_applications = []
     for router in get_routers():
         application.mount(
             path=f"{Settings.API_PREFIX}/{router.version}",
             app=router.app,
             name=router.version,
         )
+        application.state._mounted_applications.append(router.app)
 
     return application
 
