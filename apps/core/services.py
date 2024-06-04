@@ -1,4 +1,4 @@
-from conf.db import get_db_handler
+from conf.db import get_database
 
 
 class HealthCheckService:
@@ -12,7 +12,7 @@ class HealthCheckService:
         }
 
         try:
-            await get_db_handler().ping()
+            await get_database().ping()
         except ConnectionError:
             healthy["resources"]["database_healthy"] = False
 

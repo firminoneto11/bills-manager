@@ -5,15 +5,15 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.db_handler import DBHandler
+from shared.database import Database
 from shared.models import TimeStampedBaseModel
 
 from .settings import Settings
 
 
 @lru_cache
-def get_db_handler(connection_string: str = Settings.DATABASE_URL):
-    return DBHandler(connection_string)
+def get_database(connection_string: str = Settings.DATABASE_URL):
+    return Database(connection_string)
 
 
 def get_metadata():
@@ -28,7 +28,7 @@ def get_metadata():
 
 
 async def get_session():
-    async with get_db_handler().begin_session() as session:
+    async with get_database().begin_session() as session:
         yield session
 
 

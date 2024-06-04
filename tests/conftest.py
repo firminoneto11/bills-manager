@@ -7,14 +7,14 @@ from pytest import fixture
 from uvloop import EventLoopPolicy
 
 from conf.asgi import get_asgi_application
-from conf.db import get_db_handler, get_metadata, get_session
+from conf.db import get_database, get_metadata, get_session
 from shared.models import TimeStampedBaseModel
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    from shared.db_handler import DBHandler
+    from shared.database import Database
 
 
 @fixture(scope="session", autouse=True)
@@ -23,15 +23,12 @@ def asgi_app():
 
 
 @fixture(scope="session", autouse=True)
-async def db_handler():
+async def database():
     get_metadata()
 
-    await (conn := get_db_handler()).connect()
-    await conn.migrate(TimeStampedBaseModel, True)
-
-    yield conn
-
-    await conn.disconnect()
+    async with get_database() as db:
+        await db.migrate(TimeStampedBaseModel, True)
+        yield db
 
 
 @fixture(scope="session")
@@ -40,8 +37,8 @@ def event_loop_policy():
 
 
 @fixture
-async def db_session(db_handler: "DBHandler"):
-    async with db_handler.begin_session() as session:
+async def db_session(database: "Database"):
+    async with database.begin_session() as session:
         with patch.object(target=session, attribute="commit", new=session.flush):
             try:
                 yield session

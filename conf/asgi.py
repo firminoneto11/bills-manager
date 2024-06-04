@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from .db import get_db_handler
+from .db import get_database
 from .middleware import (
     allowed_hosts_middleware_configuration,
     cors_middleware_configuration,
@@ -13,9 +13,8 @@ from .settings import Settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await (conn := get_db_handler()).connect()
-    yield
-    await conn.disconnect()
+    async with get_database():
+        yield
 
 
 def get_asgi_application():
