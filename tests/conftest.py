@@ -49,7 +49,7 @@ async def db_session(database: "Database"):
 async def httpx_client(asgi_app: "ASGIApp", db_session: "AsyncSession"):
     asgi_app.dependency_overrides[get_session] = lambda: db_session
     for mount in asgi_app.state._mounted_applications:
-        mount.dependency_overrides[get_session] = lambda: db_session
+        mount.app.dependency_overrides[get_session] = lambda: db_session
 
     transport = ASGITransport(app=asgi_app)
     async with AsyncClient(base_url="http://test", transport=transport) as client:
@@ -57,4 +57,4 @@ async def httpx_client(asgi_app: "ASGIApp", db_session: "AsyncSession"):
 
     asgi_app.dependency_overrides.clear()
     for mount in asgi_app.state._mounted_applications:
-        mount.dependency_overrides.clear()
+        mount.app.dependency_overrides.clear()

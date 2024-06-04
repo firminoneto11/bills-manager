@@ -7,16 +7,17 @@ from apps.bills.models import Bills, SubBills
 from shared.utils import reverse_url
 
 if TYPE_CHECKING:
-    from fastapi import FastAPI
     from httpx import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    from shared.types import ASGIApp
 
 
 app_name = "bills"
 
 
 async def test_post_request_should_create_bills(
-    httpx_client: tuple["AsyncClient", "FastAPI"],
+    httpx_client: tuple["AsyncClient", "ASGIApp"],
     bill_data: tuple[dict, dict],
     bill_data_expected_creation: tuple[dict, dict],
 ):
@@ -35,7 +36,7 @@ async def test_post_request_should_create_bills(
 
 
 async def test_creating_bill_with_wrong_amount_should_not_succeed(
-    httpx_client: tuple["AsyncClient", "FastAPI"],
+    httpx_client: tuple["AsyncClient", "ASGIApp"],
     bill_data_failure_case: dict,
     db_session: "AsyncSession",
 ):
@@ -53,7 +54,7 @@ async def test_creating_bill_with_wrong_amount_should_not_succeed(
 
 
 async def test_get_request_should_return_empty_when_theres_no_data(
-    httpx_client: tuple["AsyncClient", "FastAPI"],
+    httpx_client: tuple["AsyncClient", "ASGIApp"],
 ):
     client, app = httpx_client
     response = await client.get(reverse_url(app, f"{app_name}:list"))
@@ -63,7 +64,7 @@ async def test_get_request_should_return_empty_when_theres_no_data(
 
 
 async def test_get_request_should_return_data(
-    httpx_client: tuple["AsyncClient", "FastAPI"], setup_bill_data: list[dict]
+    httpx_client: tuple["AsyncClient", "ASGIApp"], setup_bill_data: list[dict]
 ):
     client, app = httpx_client
     response = await client.get(reverse_url(app, f"{app_name}:list"))
@@ -130,7 +131,7 @@ async def test_get_request_should_return_data(
     ],
 )
 async def test_get_request_with_parameters(
-    httpx_client: tuple["AsyncClient", "FastAPI"],
+    httpx_client: tuple["AsyncClient", "ASGIApp"],
     query: str,
     expected_return: list[dict],
     setup_bill_data: list[dict],

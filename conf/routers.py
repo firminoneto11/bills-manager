@@ -8,25 +8,26 @@ from conf import Settings
 
 
 @dataclass
-class AppRouter:
-    version: str
+class ApplicationMount:
+    path: str
     app: FastAPI
+    name: str
 
 
 def get_routers():
+    # V1 Routes
+    _app_v1 = FastAPI(**Settings.get_asgi_settings())
+
+    _app_v1.include_router(core_router)
+    _app_v1.include_router(bills_router)
+
+    # V2 Routes
+    _app_v2 = FastAPI(**Settings.get_asgi_settings())
+
+    _app_v2.include_router(core_router)
+
+    # Returning routers
     return [
-        AppRouter(version="v1", app=_app_v1),
-        AppRouter(version="v2", app=_app_v2),
+        ApplicationMount(path=f"{Settings.API_PREFIX}/v1", app=_app_v1, name="v1"),
+        ApplicationMount(path=f"{Settings.API_PREFIX}/v2", app=_app_v2, name="v2"),
     ]
-
-
-# V1 Routes
-_app_v1 = FastAPI(**Settings.get_asgi_settings())
-
-_app_v1.include_router(core_router)
-_app_v1.include_router(bills_router)
-
-# V2 Routes
-_app_v2 = FastAPI(**Settings.get_asgi_settings())
-
-_app_v2.include_router(core_router)

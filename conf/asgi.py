@@ -34,12 +34,8 @@ def get_asgi_application() -> ASGIApp:
 
     application.state._mounted_applications = []
     for router in get_routers():
-        application.mount(
-            path=f"{Settings.API_PREFIX}/{router.version}",
-            app=router.app,
-            name=router.version,
-        )
-        application.state._mounted_applications.append(router.app)
+        application.mount(path=router.path, app=router.app, name=router.name)
+        application.state._mounted_applications.append(router)
 
     return application
 

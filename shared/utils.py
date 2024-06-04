@@ -6,7 +6,7 @@ from uuid import uuid4
 from environs import Env
 
 if TYPE_CHECKING:
-    from fastapi import FastAPI
+    from shared.types import ASGIApp
 
 
 def utcnow():
@@ -25,11 +25,11 @@ def get_env():
 
 
 def reverse_url(
-    application: "FastAPI", controller_name: str, version: str = "v1", **kwargs
-) -> str:
-    for mount in application.routes:
-        if mount.name == version:
-            for route in mount.routes:
-                if route.name == controller_name:
-                    return mount.path + route.url_path_for(controller_name, **kwargs)
+    application: "ASGIApp", controller_name: str, version: str = "v1", **kwargs
+):
+    for mount in application.state._mounted_applications:
+        for route in mount.app.routes:
+            if route.name == controller_name:
+                return mount.path + route.url_path_for(controller_name, **kwargs)
+
     raise AttributeError(f"The version {version!r} wasn't mounted in the application")
