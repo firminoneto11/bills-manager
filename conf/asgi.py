@@ -7,7 +7,7 @@ from .middleware import (
     allowed_hosts_middleware_configuration,
     cors_middleware_configuration,
 )
-from .routers import app_v1, app_v2
+from .routers import get_routers
 from .settings import Settings
 
 
@@ -28,8 +28,14 @@ def get_asgi_application():
     application.add_middleware(**allowed_hosts_middleware_configuration)
     application.add_middleware(**cors_middleware_configuration)
 
-    application.mount(path=f"{Settings.API_PREFIX}/v1", app=app_v1, name="v1")
-    application.mount(path=f"{Settings.API_PREFIX}/v2", app=app_v2, name="v2")
+    # TODO: Check if the middleware is drilled down into the mounted apps
+
+    for router in get_routers():
+        application.mount(
+            path=f"{Settings.API_PREFIX}/{router.version}",
+            app=router.app,
+            name=router.version,
+        )
 
     return application
 

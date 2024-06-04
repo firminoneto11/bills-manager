@@ -50,7 +50,7 @@ async def db_session(database: "Database"):
 async def httpx_client(asgi_app: "FastAPI", db_session: "AsyncSession"):
     asgi_app.dependency_overrides[get_session] = lambda: db_session
     for mount in asgi_app.routes:
-        if isinstance(mount, Mount):
+        if isinstance(mount, Mount) and hasattr(mount.app, "dependency_overrides"):
             mount.app.dependency_overrides[get_session] = lambda: db_session
 
     transport = ASGITransport(app=asgi_app)
@@ -59,5 +59,5 @@ async def httpx_client(asgi_app: "FastAPI", db_session: "AsyncSession"):
 
     asgi_app.dependency_overrides.clear()
     for mount in asgi_app.routes:
-        if isinstance(mount, Mount):
+        if isinstance(mount, Mount) and hasattr(mount.app, "dependency_overrides"):
             mount.app.dependency_overrides.clear()
