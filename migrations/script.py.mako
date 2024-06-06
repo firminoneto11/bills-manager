@@ -1,10 +1,13 @@
 """${message}
+
 Revision ID: ${up_revision}
 Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
+
 """
-from alembic import op
-import sqlalchemy as sa
+
+import sqlalchemy as sa  # noqa
+from alembic import op  # noqa
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.
